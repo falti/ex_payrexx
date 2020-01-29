@@ -17,8 +17,16 @@ defmodule ExPayrexx do
     get("/PaymentProvider/") |> process_response()
   end
 
-  def invoice(invoice) do
+  def create_payment_link(invoice) do
     post("/Invoice/", invoice) |> process_response()
+  end
+
+  def delete_payment_link(invoice_id) do
+    delete("/Invoice/#{invoice_id}") |> process_response()
+  end
+
+  def retrieve_payment_link(invoice_id) do
+    get("/Invoice/#{invoice_id}") |> process_response()
   end
 
   defp process_response(resp) do

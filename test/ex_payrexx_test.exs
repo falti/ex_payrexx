@@ -20,9 +20,9 @@ defmodule ExPayrexxTest do
     end)
   end
 
-  test "invoice provider" do
+  test "create payment link" do
     invoice = Invoice.new(%{title: "testinvoice", psp: 1, currency: "CHF", amount: 100})
-    {:ok, result} = ExPayrexx.invoice(invoice)
+    {:ok, result} = ExPayrexx.create_payment_link(invoice)
     assert Enum.count(result) == 1
     invoice = Enum.at(result, 0)
     assert Map.has_key?(invoice, "amount")
@@ -35,5 +35,17 @@ defmodule ExPayrexxTest do
 
     assert invoice["amount"] == 100
     assert invoice["currency"] == "CHF"
+  end
+
+  test "create get and delete payment link" do
+    invoice = Invoice.new(%{title: "testinvoice", psp: 1, currency: "CHF", amount: 100})
+    {:ok, [payment_link]} = ExPayrexx.create_payment_link(invoice)
+
+    {:ok, [payment_link_2]} = ExPayrexx.retrieve_payment_link(payment_link["id"])
+
+    assert payment_link["link"] == payment_link_2["link"]
+
+    {:ok, [payment_link_3]} = ExPayrexx.delete_payment_link(payment_link["id"])
+    assert payment_link["id"] == payment_link_3["id"]
   end
 end
